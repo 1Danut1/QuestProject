@@ -1,0 +1,18 @@
+# Node
+node_modules/
+dist/
+
+# Angular
+frontend/node_modules/
+frontend/dist/
+
+# .NET
+bin/
+obj/
+
+# VS Code
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db

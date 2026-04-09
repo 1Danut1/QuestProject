@@ -1,0 +1,9 @@
+<h2>Products</h2>
+
+<div *ngIf="products.length === 0">No products found.</div>
+
+<div *ngFor="let product of products" class="product-card">
+  <h3>{{ product.name }}</h3>
+  <p>Price: {{ product.price }} RON</p>
+  <button>Add to Cart</button>
+</div>

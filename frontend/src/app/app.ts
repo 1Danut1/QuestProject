@@ -1,12 +1,28 @@
-import { Component, signal } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { Component, OnInit } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet],
+  standalone: true,
   templateUrl: './app.html',
   styleUrl: './app.css'
 })
-export class App {
-  protected readonly title = signal('frontend');
+export class App implements OnInit {
+  message = 'Loading...';
+
+  constructor(private http: HttpClient) {}
+
+  ngOnInit(): void {
+    this.http
+      .get('http://localhost:5261/api/test', { responseType: 'text' })
+      .subscribe({
+        next: (res) => {
+          this.message = res;
+        },
+        error: (err) => {
+          console.error(err);
+          this.message = 'Could not connect to backend.';
+        }
+      });
+  }
 }

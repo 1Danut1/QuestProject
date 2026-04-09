@@ -1,6 +1,7 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ProductService } from '../../services/product.service';
+import { CartService } from '../../services/cart.service';
 import { Product } from '../../models/product';
 
 @Component({
@@ -12,6 +13,7 @@ import { Product } from '../../models/product';
 })
 export class ProductList implements OnInit {
   private productService = inject(ProductService);
+  private cartService = inject(CartService);
 
   products: Product[] = [];
 
@@ -24,5 +26,10 @@ export class ProductList implements OnInit {
         console.error('Error loading products:', err);
       },
     });
+  }
+
+  addToCart(product: Product): void {
+    this.cartService.addToCart(product);
+    console.log('Added to cart:', product);
   }
 }

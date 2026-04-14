@@ -12,11 +12,12 @@ It implements a basic product catalog with data fetched from a SQL Server databa
 
 ## Features (so far)
 
-- Product catalog
-  - Fetch products from SQL Server database
-  - Expose REST API endpoint: GET /api/products
-  - Display products in Angular UI
-- Backend built without ORM (ADO.NET)
+- Product Catalog (Angular + .NET API)
+- Shopping Cart (frontend state using BehaviorSubject)
+- Checkout
+  - Sends cart items to backend
+  - Backend recalculates total using database prices
+  - Ensures price integrity (does not trust frontend total)
 
 ## How to run
 

@@ -31,4 +31,8 @@ export class CartService {
   getCartItems(): CartItem[] {
     return this.cartItemsSubject.value;
   }
+
+  clearCart(): void {
+    this.cartItemsSubject.next([]);
+  }
 }

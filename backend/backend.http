@@ -4,3 +4,13 @@ GET {{backend_HostAddress}}/weatherforecast/
 Accept: application/json
 
 ###
+POST http://localhost:5261/api/checkout
+Content-Type: application/json
+
+{
+  "shippingAddress": "Strada Test 123, Bucuresti",
+  "items": [
+    { "productId": 1, "quantity": 2 },
+    { "productId": 2, "quantity": 1 }
+  ]
+}

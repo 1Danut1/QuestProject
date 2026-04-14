@@ -1,0 +1,47 @@
+<p>checkout works!</p>
+<h2>Checkout</h2>
+
+<div *ngIf="cartItems.length > 0; else emptyCart">
+  <h3>Your Order</h3>
+
+  <ul>
+    <li *ngFor="let item of cartItems">
+      {{ item.product.name }} - Quantity: {{ item.quantity }} - Price:
+      {{ item.product.price * item.quantity }}
+    </li>
+  </ul>
+
+  <div>
+    <label for="address">Shipping Address:</label>
+    <input
+      id="address"
+      type="text"
+      [(ngModel)]="shippingAddress"
+      placeholder="Enter shipping address"
+    />
+  </div>
+
+  <button (click)="placeOrder()">Place Order</button>
+
+  <p *ngIf="errorMessage" style="color: red">
+    {{ errorMessage }}
+  </p>
+</div>
+
+<ng-template #emptyCart>
+  <p>Your cart is empty.</p>
+</ng-template>
+
+<div *ngIf="checkoutResponse">
+  <h3>{{ checkoutResponse.message }}</h3>
+  <p><strong>Shipping Address:</strong> {{ checkoutResponse.shippingAddress }}</p>
+  <p><strong>Total:</strong> {{ checkoutResponse.total }}</p>
+
+  <h4>Order Details</h4>
+  <ul>
+    <li *ngFor="let item of checkoutResponse.items">
+      {{ item.productName }} - {{ item.quantity }} x {{ item.unitPrice }} =
+      {{ item.lineTotal }}
+    </li>
+  </ul>
+</div>

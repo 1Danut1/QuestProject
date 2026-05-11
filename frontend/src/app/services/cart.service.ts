@@ -32,6 +32,29 @@ export class CartService {
     return this.cartItemsSubject.value;
   }
 
+  increaseQuantity(productId: number): void {
+    const updatedItems = this.cartItemsSubject.value.map((item) =>
+      item.product.id === productId ? { ...item, quantity: item.quantity + 1 } : item,
+    );
+
+    this.cartItemsSubject.next(updatedItems);
+  }
+
+  decreaseQuantity(productId: number): void {
+    const updatedItems = this.cartItemsSubject.value
+      .map((item) =>
+        item.product.id === productId ? { ...item, quantity: item.quantity - 1 } : item,
+      )
+      .filter((item) => item.quantity > 0);
+
+    this.cartItemsSubject.next(updatedItems);
+  }
+
+  removeFromCart(productId: number): void {
+    const updatedItems = this.cartItemsSubject.value.filter((item) => item.product.id !== productId);
+    this.cartItemsSubject.next(updatedItems);
+  }
+
   clearCart(): void {
     this.cartItemsSubject.next([]);
   }

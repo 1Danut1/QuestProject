@@ -1,9 +1,49 @@
-<h2>Products</h2>
+<section class="hero-banner">
+  <div class="hero-content">
+    <p class="hero-kicker">Trending now</p>
+    <h1>Shop smarter with modern essentials</h1>
+    <p class="hero-copy">
+      Discover popular products with clean design, quick checkout, and a smooth shopping
+      experience.
+    </p>
+    <div class="hero-actions">
+      <a routerLink="/checkout" class="hero-btn primary">Shop now</a>
+      <a routerLink="/cart" class="hero-btn secondary">View cart</a>
+    </div>
+  </div>
 
-<div *ngIf="products.length === 0">No products found.</div>
+  <div class="hero-side-card">
+    <p>Special offer</p>
+    <h3>Weekend Sale</h3>
+    <span>Up to 30% on selected products</span>
+  </div>
+</section>
 
-<div *ngFor="let product of products" class="product-card">
-  <h3>{{ product.name }}</h3>
-  <p>Price: {{ product.price }} RON</p>
-  <button (click)="addToCart(product)">Add to Cart</button>
-</div>
+<section class="featured-section">
+  <div class="section-title-row">
+    <div>
+      <p class="section-kicker">Featured products</p>
+      <h2>Best sellers for your daily needs</h2>
+    </div>
+  </div>
+
+  <div *ngIf="products.length === 0" class="empty-state">No products found.</div>
+
+  <div class="products-grid">
+    <article *ngFor="let product of products" class="product-card">
+      <div class="image-wrap">
+        <img
+          [src]="'https://picsum.photos/seed/quest-product-' + product.id + '/420/300'"
+          [alt]="product.name"
+          loading="lazy"
+        />
+      </div>
+
+      <div class="product-content">
+        <h3>{{ product.name }}</h3>
+        <p class="price">{{ product.price }} RON</p>
+        <button type="button" (click)="addToCart(product)">Add to Cart</button>
+      </div>
+    </article>
+  </div>
+</section>

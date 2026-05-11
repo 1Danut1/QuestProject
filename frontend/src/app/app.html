@@ -1,5 +1,38 @@
-<app-product-list></app-product-list>
-<app-cart></app-cart>
-<app-checkout></app-checkout>
-<app-register></app-register>
-<app-login></app-login>
+<div class="announcement-bar">
+  <div class="site-container announcement-content">
+    <span>Free shipping for orders over 150 RON</span>
+    <span>Support: Mon-Fri 09:00-18:00</span>
+  </div>
+</div>
+
+<header class="main-header">
+  <div class="site-container header-row">
+    <a routerLink="/" class="brand" aria-label="QuestShop Home">
+      <span class="brand-mark">Q</span>
+      <span class="brand-text">
+        <strong>QuestShop</strong>
+        <small>Modern Ecommerce Demo</small>
+      </span>
+    </a>
+
+    <nav class="main-nav" aria-label="Main navigation">
+      <a routerLink="/" routerLinkActive="active-link" [routerLinkActiveOptions]="{ exact: true }">Home</a>
+      <a routerLink="/cart" routerLinkActive="active-link">Cart</a>
+      <ng-container *ngIf="!(isAuthenticated$ | async); else authenticatedNav">
+        <a routerLink="/register" routerLinkActive="active-link">Register</a>
+        <a routerLink="/login" routerLinkActive="active-link">Login</a>
+      </ng-container>
+      <ng-template #authenticatedNav>
+        <a routerLink="/orders" routerLinkActive="active-link">My Orders</a>
+        <span class="user-pill">{{ username$ | async }}</span>
+        <button type="button" class="logout-btn" (click)="logout()">Logout</button>
+      </ng-template>
+    </nav>
+  </div>
+</header>
+
+<main class="site-main">
+  <div class="site-container route-shell">
+    <router-outlet></router-outlet>
+  </div>
+</main>

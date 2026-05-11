@@ -1,5 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
+using Microsoft.IdentityModel.Tokens;
 using backend.Models;
 
 namespace backend.Controllers
@@ -77,31 +81,63 @@ namespace backend.Controllers
 
             var connectionString = _configuration.GetConnectionString("DefaultConnection");
 
+            int userId;
+
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();
 
-                string query = "SELECT COUNT(*) FROM Users WHERE Username = @Username AND Password = @Password";
+                string query = "SELECT Id FROM Users WHERE Username = @Username AND Password = @Password";
 
                 using (SqlCommand command = new SqlCommand(query, connection))
                 {
                     command.Parameters.AddWithValue("@Username", request.Username);
                     command.Parameters.AddWithValue("@Password", request.Password);
 
-                    int userCount = (int)command.ExecuteScalar();
-
-                    if (userCount == 0)
+                    object? result = command.ExecuteScalar();
+                    if (result == null)
                     {
                         return Unauthorized("Invalid username or password.");
                     }
+
+                    userId = Convert.ToInt32(result);
                 }
             }
+
+            string token = GenerateToken(userId, request.Username);
 
             return Ok(new AuthResponse
             {
                 Message = "Login successful.",
-                Username = request.Username
+                Username = request.Username,
+                Token = token
             });
+        }
+
+        private string GenerateToken(int userId, string username)
+        {
+            string jwtKey = _configuration["Jwt:Key"] ?? throw new InvalidOperationException("Jwt:Key is missing.");
+            string jwtIssuer = _configuration["Jwt:Issuer"] ?? "QuestProject";
+            string jwtAudience = _configuration["Jwt:Audience"] ?? "QuestProjectClient";
+            int expiresMinutes = int.TryParse(_configuration["Jwt:ExpiresMinutes"], out int minutes) ? minutes : 120;
+
+            var claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.NameIdentifier, userId.ToString()),
+                new Claim(ClaimTypes.Name, username)
+            };
+
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey));
+            var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+            var token = new JwtSecurityToken(
+                issuer: jwtIssuer,
+                audience: jwtAudience,
+                claims: claims,
+                expires: DateTime.UtcNow.AddMinutes(expiresMinutes),
+                signingCredentials: credentials
+            );
+
+            return new JwtSecurityTokenHandler().WriteToken(token);
         }
     }
 }

@@ -1,1 +1,33 @@
-/* You can add global styles to this file, and also import other style files */
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --font-family-base: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  --color-text: #25324a;
+  --color-muted: #6f7c93;
+  --color-surface: #ffffff;
+  --color-surface-soft: #f7f8fc;
+  --color-border: #e8ecf4;
+  --color-primary: #ff3f6a;
+  --color-primary-strong: #ea2f59;
+  --shadow-soft: 0 10px 30px rgba(31, 42, 68, 0.08);
+  --shadow-medium: 0 14px 35px rgba(31, 42, 68, 0.12);
+}
+
+body {
+  background: linear-gradient(180deg, #f5f7fc 0%, #eef2f9 100%);
+  color: var(--color-text);
+  font-family: var(--font-family-base);
+}
+
+.site-container {
+  width: min(1180px, calc(100% - 2rem));
+  margin: 0 auto;
+}

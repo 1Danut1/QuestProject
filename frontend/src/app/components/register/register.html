@@ -1,13 +1,20 @@
 <h2>Register</h2>
 
-<div>
-  <input [(ngModel)]="username" placeholder="Username" />
+<div class="form-field">
+  <label for="register-username">Username</label>
+  <input id="register-username" [(ngModel)]="username" placeholder="Username" />
 </div>
 
-<div>
-  <input [(ngModel)]="password" type="password" placeholder="Password" />
+<div class="form-field">
+  <label for="register-password">Password</label>
+  <input
+    id="register-password"
+    [(ngModel)]="password"
+    type="password"
+    placeholder="Password"
+  />
 </div>
 
-<button (click)="register()">Register</button>
+<button type="button" (click)="register()">Create Account</button>
 
-<p>{{ message }}</p>
+<p class="message" *ngIf="message">{{ message }}</p>

@@ -1,6 +1,259 @@
+.cart-checkout {
+  margin-top: 1.4rem;
+}
+
+.section-title {
+  margin-bottom: 1rem;
+}
+
+.section-title p {
+  margin: 0 0 0.35rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.72rem;
+  color: var(--color-primary);
+  font-weight: 700;
+}
+
+.section-title h2 {
+  margin: 0;
+}
+
+.empty-state {
+  border: 1px dashed var(--color-border);
+  border-radius: 1rem;
+  background: #fff;
+  color: var(--color-muted);
+  padding: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.8rem;
+  flex-wrap: wrap;
+}
+
+.empty-state p {
+  margin: 0;
+}
+
+.continue-btn {
+  text-decoration: none;
+  border-radius: 0.65rem;
+  border: 1px solid #d8deea;
+  color: #32405b;
+  font-weight: 700;
+  padding: 0.5rem 0.85rem;
+  background: #fff;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.continue-btn:hover {
+  background: #f5f7fc;
+  color: var(--color-primary-strong);
+}
+
+.layout-grid {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr;
+  gap: 1rem;
+  align-items: start;
+}
+
+.cart-list {
+  display: grid;
+  gap: 0.7rem;
+}
+
 .cart-item {
-  border: 1px solid #ccc;
-  padding: 12px;
-  margin-bottom: 12px;
-  border-radius: 8px;
+  border: 1px solid var(--color-border);
+  border-radius: 0.9rem;
+  padding: 0.85rem 1rem;
+  background: #fff;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: var(--shadow-soft);
+}
+
+.item-details {
+  min-width: 0;
+}
+
+.cart-item h3 {
+  margin: 0 0 0.3rem;
+  font-size: 1rem;
+}
+
+.cart-item p {
+  margin: 0;
+  color: var(--color-muted);
+}
+
+.item-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.qty-controls {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  border: 1px solid #dfe4ef;
+  border-radius: 999px;
+  padding: 0.2rem;
+}
+
+.qty-btn {
+  width: 1.8rem;
+  height: 1.8rem;
+  border: none;
+  border-radius: 999px;
+  background: #f4f7fd;
+  color: #2c3a55;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.qty {
+  min-width: 1.8rem;
+  text-align: center;
+  color: #2c3a55;
+  font-weight: 700;
+}
+
+.remove-btn {
+  width: auto;
+  border: none;
+  border-radius: 0.55rem;
+  padding: 0.42rem 0.6rem;
+  background: #fff2f4;
+  color: #b42318;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.checkout-card {
+  background: #fff;
+  border: 1px solid var(--color-border);
+  border-radius: 1rem;
+  box-shadow: var(--shadow-soft);
+  padding: 1rem;
+}
+
+.checkout-card h3 {
+  margin: 0 0 0.6rem;
+}
+
+.summary-line {
+  margin: 0 0 0.35rem;
+  color: var(--color-muted);
+  font-size: 0.9rem;
+}
+
+.total {
+  margin: 0 0 0.8rem;
+  color: #2a3a57;
+  font-weight: 700;
+}
+
+.checkout-card label {
+  display: block;
+  margin-bottom: 0.35rem;
+  font-size: 0.86rem;
+  color: var(--color-muted);
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+
+.form-group {
+  min-width: 0;
+}
+
+textarea,
+input {
+  width: 100%;
+  padding: 0.7rem 0.8rem;
+  border: 1px solid #d8deea;
+  border-radius: 0.65rem;
+  font: inherit;
+  margin-bottom: 0.8rem;
+}
+
+textarea {
+  min-height: 86px;
+  resize: vertical;
+}
+
+.auth-warning {
+  margin: 0 0 0.7rem;
+  color: #a86014;
+  background: #fff7e8;
+  border: 1px solid #f3ddbe;
+  border-radius: 0.6rem;
+  padding: 0.5rem 0.6rem;
+  font-size: 0.86rem;
+}
+
+button {
+  width: 100%;
+  border: none;
+  border-radius: 0.7rem;
+  background: linear-gradient(90deg, #ff5d7f 0%, #ff3f6a 100%);
+  color: #fff;
+  font-weight: 700;
+  padding: 0.65rem 0.8rem;
+  cursor: pointer;
+}
+
+.error-message {
+  color: #b42318;
+  margin-top: 0.75rem;
+}
+
+.success-box {
+  margin-top: 1rem;
+  border: 1px solid #d8eadf;
+  border-radius: 1rem;
+  background: #f6fff9;
+  padding: 1rem;
+}
+
+.success-box h3 {
+  margin-top: 0;
+}
+
+.response-list {
+  list-style: none;
+  margin: 0.6rem 0 0;
+  padding: 0;
+}
+
+.response-list li {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.8rem;
+  border-bottom: 1px solid #e6f2ea;
+  padding: 0.55rem 0;
+}
+
+@media (max-width: 900px) {
+  .layout-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .cart-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
 }

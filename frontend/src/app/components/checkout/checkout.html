@@ -1,47 +1,68 @@
-<p>checkout works!</p>
 <h2>Checkout</h2>
 
 <div *ngIf="cartItems.length > 0; else emptyCart">
   <h3>Your Order</h3>
 
-  <ul>
+  <ul class="order-list">
     <li *ngFor="let item of cartItems">
-      {{ item.product.name }} - Quantity: {{ item.quantity }} - Price:
-      {{ item.product.price * item.quantity }}
+      <span>{{ item.product.name }}</span>
+      <span>{{ item.quantity }} x {{ item.product.price }} RON</span>
     </li>
   </ul>
 
-  <div>
+  <div class="form-field">
     <label for="address">Shipping Address:</label>
     <input
       id="address"
       type="text"
       [(ngModel)]="shippingAddress"
-      placeholder="Enter shipping address"
+      placeholder="Street name, building, apartment"
     />
   </div>
 
-  <button (click)="placeOrder()">Place Order</button>
+  <div class="form-row">
+    <div class="form-field">
+      <label for="city">City:</label>
+      <input id="city" type="text" [(ngModel)]="city" placeholder="e.g. Bucharest" />
+    </div>
 
-  <p *ngIf="errorMessage" style="color: red">
+    <div class="form-field">
+      <label for="postalCode">Postal Code:</label>
+      <input id="postalCode" type="text" [(ngModel)]="postalCode" placeholder="e.g. 010101" />
+    </div>
+  </div>
+
+  <div class="form-field">
+    <label for="phoneNumber">Phone Number:</label>
+    <input
+      id="phoneNumber"
+      type="tel"
+      [(ngModel)]="phoneNumber"
+      placeholder="Enter phone number"
+    />
+  </div>
+
+  <button type="button" (click)="placeOrder()">Place Order</button>
+
+  <p *ngIf="errorMessage" class="error">
     {{ errorMessage }}
   </p>
 </div>
 
 <ng-template #emptyCart>
-  <p>Your cart is empty.</p>
+  <p class="empty-state">Your cart is empty.</p>
 </ng-template>
 
-<div *ngIf="checkoutResponse">
+<div *ngIf="checkoutResponse" class="response-box">
   <h3>{{ checkoutResponse.message }}</h3>
   <p><strong>Shipping Address:</strong> {{ checkoutResponse.shippingAddress }}</p>
   <p><strong>Total:</strong> {{ checkoutResponse.total }}</p>
 
   <h4>Order Details</h4>
-  <ul>
+  <ul class="order-list">
     <li *ngFor="let item of checkoutResponse.items">
-      {{ item.productName }} - {{ item.quantity }} x {{ item.unitPrice }} =
-      {{ item.lineTotal }}
+      <span>{{ item.productName }}</span>
+      <span>{{ item.quantity }} x {{ item.unitPrice }} = {{ item.lineTotal }}</span>
     </li>
   </ul>
 </div>

@@ -1,12 +1,80 @@
-<p>cart works!</p>
-<h2>Cart</h2>
+<section class="cart-checkout">
+  <div class="section-title">
+    <p>Secure shopping</p>
+    <h2>Cart</h2>
+  </div>
 
-<div *ngIf="cartItems.length === 0">Cart is empty.</div>
+  <div *ngIf="cartItems.length === 0" class="empty-state">
+    <p>Your cart is empty.</p>
+    <a routerLink="/" class="continue-btn">Continue Shopping</a>
+  </div>
 
-<div *ngFor="let item of cartItems" class="cart-item">
-  <h3>{{ item.product.name }}</h3>
-  <p>Price: {{ item.product.price }} RON</p>
-  <p>Quantity: {{ item.quantity }}</p>
-</div>
+  <div *ngIf="cartItems.length > 0" class="layout-grid">
+    <div class="cart-list">
+      <article *ngFor="let item of cartItems" class="cart-item">
+        <div class="item-details">
+          <h3>{{ item.product.name }}</h3>
+          <p>{{ item.product.price }} RON / unit</p>
+        </div>
 
-<h3 *ngIf="cartItems.length > 0">Total: {{ getTotal() }} RON</h3>
+        <div class="item-actions">
+          <div class="qty-controls">
+            <button type="button" class="qty-btn" (click)="decreaseQty(item.product.id)">-</button>
+            <span class="qty">{{ item.quantity }}</span>
+            <button type="button" class="qty-btn" (click)="increaseQty(item.product.id)">+</button>
+          </div>
+          <button type="button" class="remove-btn" (click)="removeItem(item.product.id)">Remove</button>
+        </div>
+      </article>
+    </div>
+
+    <aside class="checkout-card">
+      <h3>Order Summary</h3>
+      <p class="summary-line">Items: {{ cartItems.length }}</p>
+      <p class="summary-line">Subtotal: {{ getSubtotal() }} RON</p>
+      <p class="total">Total: {{ getTotal() }} RON</p>
+
+      <label for="shippingAddress">Shipping address</label>
+      <textarea
+        id="shippingAddress"
+        [(ngModel)]="shippingAddress"
+        placeholder="Street name, building, apartment"
+      ></textarea>
+
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="city">City</label>
+          <input id="city" type="text" [(ngModel)]="city" placeholder="e.g. Bucharest" />
+        </div>
+
+        <div class="form-group">
+          <label for="postalCode">Postal code</label>
+          <input id="postalCode" type="text" [(ngModel)]="postalCode" placeholder="e.g. 010101" />
+        </div>
+      </div>
+
+      <label for="phoneNumber">Phone number</label>
+      <input id="phoneNumber" type="tel" [(ngModel)]="phoneNumber" placeholder="e.g. 07xx xxx xxx" />
+
+      <p *ngIf="!isAuthenticated" class="auth-warning">
+        Login is required to place your order.
+      </p>
+      <button type="button" (click)="placeOrder()">Place Order</button>
+    </aside>
+  </div>
+
+  <p *ngIf="errorMessage" class="error-message">{{ errorMessage }}</p>
+
+  <div *ngIf="checkoutResponse" class="success-box">
+    <h3>{{ checkoutResponse.message }}</h3>
+    <p><strong>Shipping:</strong> {{ checkoutResponse.shippingAddress }}</p>
+    <p><strong>Total:</strong> {{ checkoutResponse.total }} RON</p>
+
+    <ul class="response-list">
+      <li *ngFor="let item of checkoutResponse.items">
+        <span>{{ item.productName }}</span>
+        <span>{{ item.quantity }} x {{ item.unitPrice }} = {{ item.lineTotal }}</span>
+      </li>
+    </ul>
+  </div>
+</section>

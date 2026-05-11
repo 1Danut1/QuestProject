@@ -19,6 +19,9 @@ import { CheckoutResponse } from '../../models/checkout-response';
 export class CheckoutComponent implements OnInit {
   cartItems: CartItem[] = [];
   shippingAddress: string = '';
+  city: string = '';
+  postalCode: string = '';
+  phoneNumber: string = '';
   checkoutResponse: CheckoutResponse | null = null;
   errorMessage: string = '';
 
@@ -42,6 +45,21 @@ export class CheckoutComponent implements OnInit {
       return;
     }
 
+    if (!this.city.trim()) {
+      this.errorMessage = 'City is required.';
+      return;
+    }
+
+    if (!this.postalCode.trim()) {
+      this.errorMessage = 'Postal code is required.';
+      return;
+    }
+
+    if (!this.phoneNumber.trim()) {
+      this.errorMessage = 'Phone number is required.';
+      return;
+    }
+
     if (this.cartItems.length === 0) {
       this.errorMessage = 'Your cart is empty.';
       return;
@@ -49,6 +67,9 @@ export class CheckoutComponent implements OnInit {
 
     const request: CheckoutRequest = {
       shippingAddress: this.shippingAddress,
+      city: this.city,
+      postalCode: this.postalCode,
+      phoneNumber: this.phoneNumber,
       items: this.cartItems.map((item) => ({
         productId: item.product.id,
         quantity: item.quantity,
@@ -59,6 +80,9 @@ export class CheckoutComponent implements OnInit {
       next: (response) => {
         this.checkoutResponse = response;
         this.shippingAddress = '';
+        this.city = '';
+        this.postalCode = '';
+        this.phoneNumber = '';
         this.cartService.clearCart();
       },
       error: (error) => {

@@ -1,0 +1,36 @@
+<section class="orders-page">
+  <div class="section-title">
+    <p>Account</p>
+    <h2>My Orders</h2>
+  </div>
+
+  <p *ngIf="loading" class="state-message">Loading orders...</p>
+  <p *ngIf="errorMessage" class="state-message error">{{ errorMessage }}</p>
+  <p *ngIf="!loading && !errorMessage && orders.length === 0" class="state-message">
+    You have no orders yet.
+  </p>
+
+  <div class="orders-list" *ngIf="orders.length > 0">
+    <article class="order-card" *ngFor="let order of orders">
+      <header class="order-head">
+        <div>
+          <h3>Order #{{ order.orderId }}</h3>
+          <p>{{ order.orderDate | date: 'medium' }}</p>
+        </div>
+        <div class="order-meta">
+          <span class="status">{{ order.status }}</span>
+          <strong>{{ order.total }} RON</strong>
+        </div>
+      </header>
+
+      <p class="shipping"><strong>Shipping:</strong> {{ order.shippingAddress }}</p>
+
+      <ul class="item-list">
+        <li *ngFor="let item of order.items">
+          <span>{{ item.productName }}</span>
+          <span>{{ item.quantity }} x {{ item.unitPrice }} = {{ item.lineTotal }}</span>
+        </li>
+      </ul>
+    </article>
+  </div>
+</section>

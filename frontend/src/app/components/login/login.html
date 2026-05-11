@@ -1,14 +1,20 @@
-<p>login works!</p>
 <h2>Login</h2>
 
-<div>
-  <input [(ngModel)]="username" placeholder="Username" />
+<div class="form-field">
+  <label for="login-username">Username</label>
+  <input id="login-username" [(ngModel)]="username" placeholder="Username" />
 </div>
 
-<div>
-  <input [(ngModel)]="password" type="password" placeholder="Password" />
+<div class="form-field">
+  <label for="login-password">Password</label>
+  <input
+    id="login-password"
+    [(ngModel)]="password"
+    type="password"
+    placeholder="Password"
+  />
 </div>
 
-<button (click)="login()">Login</button>
+<button type="button" (click)="login()">Sign In</button>
 
-<p>{{ message }}</p>
+<p class="message" *ngIf="message">{{ message }}</p>

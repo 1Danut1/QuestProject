@@ -5,6 +5,7 @@ using System.Security.Claims;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
 using backend.Models;
+using backend.Security;
 
 namespace backend.Controllers
 {
@@ -34,6 +35,14 @@ namespace backend.Controllers
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();
+                var userColumns = GetTableColumns(connection, "Users");
+                var passwordHashColumn = ResolveFirstExisting(userColumns, "PasswordHash");
+                var passwordColumn = ResolveFirstExisting(userColumns, "Password");
+
+                if (string.IsNullOrEmpty(passwordHashColumn) && string.IsNullOrEmpty(passwordColumn))
+                {
+                    return StatusCode(500, "Users table is missing password column.");
+                }
 
                 // verifică dacă userul există deja
                 string checkQuery = "SELECT COUNT(*) FROM Users WHERE Username = @Username";
@@ -51,12 +60,26 @@ namespace backend.Controllers
                 }
 
                 // inserează user nou
-                string insertQuery = "INSERT INTO Users (Username, Password) VALUES (@Username, @Password)";
+                string passwordHash = PasswordHasher.ComputeSha256Hex(request.Password);
+                string insertQuery;
 
-                using (SqlCommand insertCommand = new SqlCommand(insertQuery, connection))
+                using (SqlCommand insertCommand = new SqlCommand())
                 {
+                    insertCommand.Connection = connection;
                     insertCommand.Parameters.AddWithValue("@Username", request.Username);
-                    insertCommand.Parameters.AddWithValue("@Password", request.Password);
+
+                    if (!string.IsNullOrEmpty(passwordHashColumn))
+                    {
+                        insertQuery = $"INSERT INTO Users (Username, {passwordHashColumn}) VALUES (@Username, @PasswordHash)";
+                        insertCommand.Parameters.AddWithValue("@PasswordHash", passwordHash);
+                    }
+                    else
+                    {
+                        insertQuery = $"INSERT INTO Users (Username, {passwordColumn}) VALUES (@Username, @Password)";
+                        insertCommand.Parameters.AddWithValue("@Password", request.Password);
+                    }
+
+                    insertCommand.CommandText = insertQuery;
 
                     insertCommand.ExecuteNonQuery();
                 }
@@ -86,21 +109,45 @@ namespace backend.Controllers
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();
+                var userColumns = GetTableColumns(connection, "Users");
+                var passwordHashColumn = ResolveFirstExisting(userColumns, "PasswordHash");
+                var passwordColumn = ResolveFirstExisting(userColumns, "Password");
 
-                string query = "SELECT Id FROM Users WHERE Username = @Username AND Password = @Password";
+                if (string.IsNullOrEmpty(passwordHashColumn) && string.IsNullOrEmpty(passwordColumn))
+                {
+                    return StatusCode(500, "Users table is missing password column.");
+                }
+
+                string selectedPasswordColumn = !string.IsNullOrEmpty(passwordHashColumn) ? passwordHashColumn : passwordColumn!;
+                string query = $"SELECT Id, {selectedPasswordColumn} AS StoredPassword FROM Users WHERE Username = @Username";
 
                 using (SqlCommand command = new SqlCommand(query, connection))
                 {
                     command.Parameters.AddWithValue("@Username", request.Username);
-                    command.Parameters.AddWithValue("@Password", request.Password);
-
-                    object? result = command.ExecuteScalar();
-                    if (result == null)
+                    using SqlDataReader reader = command.ExecuteReader();
+                    if (!reader.Read())
                     {
                         return Unauthorized("Invalid username or password.");
                     }
 
-                    userId = Convert.ToInt32(result);
+                    userId = reader.GetInt32(reader.GetOrdinal("Id"));
+                    string storedPassword = reader["StoredPassword"]?.ToString() ?? string.Empty;
+
+                    bool validLogin;
+                    if (!string.IsNullOrEmpty(passwordHashColumn))
+                    {
+                        string requestHash = PasswordHasher.ComputeSha256Hex(request.Password);
+                        validLogin = string.Equals(storedPassword, requestHash, StringComparison.OrdinalIgnoreCase);
+                    }
+                    else
+                    {
+                        validLogin = string.Equals(storedPassword, request.Password, StringComparison.Ordinal);
+                    }
+
+                    if (!validLogin)
+                    {
+                        return Unauthorized("Invalid username or password.");
+                    }
                 }
             }
 
@@ -138,6 +185,39 @@ namespace backend.Controllers
             );
 
             return new JwtSecurityTokenHandler().WriteToken(token);
+        }
+
+        private static HashSet<string> GetTableColumns(SqlConnection connection, string tableName)
+        {
+            const string columnsQuery = @"
+                SELECT COLUMN_NAME
+                FROM INFORMATION_SCHEMA.COLUMNS
+                WHERE TABLE_NAME = @TableName";
+
+            var result = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            using SqlCommand command = new(columnsQuery, connection);
+            command.Parameters.AddWithValue("@TableName", tableName);
+
+            using SqlDataReader reader = command.ExecuteReader();
+            while (reader.Read())
+            {
+                result.Add(reader.GetString(0));
+            }
+
+            return result;
+        }
+
+        private static string? ResolveFirstExisting(HashSet<string> columns, params string[] candidates)
+        {
+            foreach (var name in candidates)
+            {
+                if (columns.Contains(name))
+                {
+                    return name;
+                }
+            }
+
+            return null;
         }
     }
 }

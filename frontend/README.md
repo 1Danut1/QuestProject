@@ -1,6 +1,8 @@
-# Frontend
+# Frontend (Angular)
 
 This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.2.6.
+
+**Full-stack setup, API list, and database script** are documented in the repository root: [`../README.md`](../README.md).
 
 ## Development server
 
@@ -11,6 +13,12 @@ ng serve
 ```
 
 Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+
+## Unit tests
+
+```bash
+npm test
+```
 
 ## Code scaffolding
 

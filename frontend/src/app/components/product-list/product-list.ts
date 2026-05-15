@@ -4,6 +4,7 @@ import { RouterLink } from '@angular/router';
 import { ProductService } from '../../services/product.service';
 import { CartService } from '../../services/cart.service';
 import { Product } from '../../models/product';
+import { getProductImageUrl } from '../../utils/product-image';
 
 @Component({
   selector: 'app-product-list',
@@ -32,5 +33,9 @@ export class ProductList implements OnInit {
   addToCart(product: Product): void {
     this.cartService.addToCart(product);
     console.log('Added to cart:', product);
+  }
+
+  imageForProduct(product: Product): string {
+    return getProductImageUrl(product);
   }
 }

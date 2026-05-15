@@ -53,6 +53,8 @@
   display: grid;
   place-items: center;
   font-weight: 800;
+  font-size: 1.15rem;
+  line-height: 1;
   color: #fff;
   background: linear-gradient(135deg, #ff5d7f 0%, #ff3f6a 100%);
   box-shadow: 0 8px 20px rgba(255, 63, 106, 0.25);

@@ -175,8 +175,8 @@ namespace backend.Controllers
                 }
 
                 const string insertItemQuery = @"
-                    INSERT INTO OrderItems (OrderId, ProductId, Quantity, UnitPrice, LineTotal)
-                    VALUES (@OrderId, @ProductId, @Quantity, @UnitPrice, @LineTotal)";
+                    INSERT INTO OrderItems (OrderId, ProductId, Quantity, Price)
+                    VALUES (@OrderId, @ProductId, @Quantity, @Price)";
 
                 foreach (var item in orderItems)
                 {
@@ -184,8 +184,7 @@ namespace backend.Controllers
                     itemCommand.Parameters.AddWithValue("@OrderId", orderId);
                     itemCommand.Parameters.AddWithValue("@ProductId", item.ProductId);
                     itemCommand.Parameters.AddWithValue("@Quantity", item.Quantity);
-                    itemCommand.Parameters.AddWithValue("@UnitPrice", item.UnitPrice);
-                    itemCommand.Parameters.AddWithValue("@LineTotal", item.LineTotal);
+                    itemCommand.Parameters.AddWithValue("@Price", item.UnitPrice);
                     itemCommand.ExecuteNonQuery();
                 }
 
@@ -238,6 +237,7 @@ namespace backend.Controllers
             var statusColumn = ResolveFirstExisting(orderColumns, "Status");
             var createdAtColumn = ResolveFirstExisting(orderColumns, "CreatedAt", "OrderDate", "CreatedOn");
             var totalColumn = ResolveFirstExisting(orderColumns, "Total", "TotalAmount", "TotalPrice", "GrandTotal");
+            var itemPriceColumn = "Price";
 
             if (string.IsNullOrEmpty(userIdColumn))
             {
@@ -258,9 +258,9 @@ namespace backend.Controllers
                     {totalSelect} AS Total,
                     oi.ProductId,
                     p.Name AS ProductName,
-                    oi.UnitPrice,
+                    oi.{itemPriceColumn} AS UnitPrice,
                     oi.Quantity,
-                    oi.LineTotal
+                    oi.{itemPriceColumn} * oi.Quantity AS LineTotal
                 FROM Orders o
                 INNER JOIN OrderItems oi ON oi.OrderId = o.Id
                 INNER JOIN Products p ON p.Id = oi.ProductId

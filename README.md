@@ -1,67 +1,102 @@
-# E-commerce App
+# QuestProject — E-commerce (Angular + ASP.NET Core + SQL Server)
 
-## Description
+Vertical slice: products, cart (RxJS), authenticated checkout, orders persisted in SQL Server. **No ORM** — data access uses ADO.NET (`SqlConnection` / `SqlCommand`).
 
-This project is a fullstack application built with:
+## Prerequisites
 
-- Angular (frontend)
-- ASP.NET Core Web API (backend)
-- SQL Server (database)
+- [.NET SDK](https://dotnet.microsoft.com/download) (project targets **net10.0**)
+- [Node.js](https://nodejs.org/) + npm
+- SQL Server (Express or full) + optional SSMS
 
-It implements a basic product catalog with data fetched from a SQL Server database and displayed in an Angular UI.
+## 1. Database
 
-## Features (so far)
+1. Create database and objects using the script in this repo:
 
-- Product Catalog (Angular + .NET API)
-- Shopping Cart (frontend state using BehaviorSubject)
-- Checkout
-  - Sends cart items to backend
-  - Backend recalculates total using database prices
-  - Ensures price integrity (does not trust frontend total)
+   - File: `database/schema.sql`
+   - In SSMS: open the file, set paths if needed, execute against your server.
 
-## How to run
+2. **Already have `QuestDb`?** Reload the refurbished PC catalog (clears orders + products, then inserts **38 products**):
 
-## Backend Setup
+   - File: `database/seed-pc-components.sql`
 
-1. Navigate to the backend folder:
-   cd backend
+3. Update the connection string in `backend/appsettings.json`:
 
-2. Run the API:
-   dotnet run
+   - Key: `ConnectionStrings:DefaultConnection`
+   - Example: `Server=localhost\\SQLEXPRESS;Database=QuestDb;Trusted_Connection=True;TrustServerCertificate=True;`
 
-3. The API will be available at:
-   http://localhost:5261/api/products
+4. **Submission note:** if the exercise asks for a `.bak`, export a backup from SSMS after the DB is populated (`Tasks` → `Back up database…`) and add the file to the repo or release assets.
 
-## Database Setup
+## 2. Backend (API)
 
-1. Install SQL Server and SSMS
-2. Create a database named: QuestDb
-3. Create table:
+```bash
+cd backend
+dotnet restore
+dotnet run
+```
 
-CREATE TABLE Products (
-Id INT PRIMARY KEY IDENTITY,
-Name NVARCHAR(100),
-Price DECIMAL(10,2)
-);
+- Default URL (see `Properties/launchSettings.json`): **http://localhost:5261**
+- Swagger UI is enabled while developing.
 
-4. Insert sample data into Products table
+### API overview
 
-## Frontend Setup
+| Method | Route | Auth | Description |
+|--------|--------|------|-------------|
+| GET | `/api/products` | No | List products |
+| POST | `/api/auth/register` | No | Register user |
+| POST | `/api/auth/login` | No | Login → returns JWT |
+| POST | `/api/checkout` | No | Legacy demo checkout (recalculates totals from DB) |
+| POST | `/api/orders` | **Bearer JWT** | Create order + order lines (totals from `Products`) |
+| GET | `/api/orders/my` | **Bearer JWT** | Current user’s orders |
 
-1. Navigate to frontend folder:
-   cd frontend
+JWT settings: `backend/appsettings.json` → `Jwt` section (`Key`, `Issuer`, `Audience`, `ExpiresMinutes`).
 
-2. Install dependencies:
-   npm install
+### Unit tests (backend)
 
-3. Run the app:
-   ng serve
+```bash
+dotnet test backend.Tests/backend.Tests.csproj
+```
 
-4. Open:
-   http://localhost:4200
+## 3. Frontend (Angular)
 
-## Notes
+```bash
+cd frontend
+npm install
+npm start
+```
 
-- Backend calculates and provides product data
-- No ORM is used (ADO.NET with SqlConnection)
-- Angular consumes the API via HttpClient
+- App: **http://localhost:4200**
+- API base URL is currently hardcoded to `http://localhost:5261` in services (adjust if your API port differs).
+
+### Routes
+
+| Path | Description |
+|------|-------------|
+| `/` | Product list + add to cart |
+| `/cart` | Cart + checkout (shipping, place order) |
+| `/login`, `/register` | Auth |
+| `/orders` | My orders (requires login) |
+
+### Unit tests (frontend)
+
+```bash
+cd frontend
+npm test
+```
+
+Uses Angular’s **Vitest** builder (`@angular/build:unit-test`).
+
+## 4. Architecture notes
+
+- **Cart state:** `CartService` with `BehaviorSubject` for cart lines; components subscribe to `cartItems$`.
+- **Auth state:** `AuthService` with persisted session (`localStorage`) + JWT attached via HTTP interceptor.
+- **Checkout:** `POST /api/orders` builds line totals from **database product prices**; the frontend total is display-only.
+- **Passwords:** target schema uses `Users.PasswordHash` (SHA-256 hex). The API can still work with a legacy `Password` column if present (for migration).
+
+## 5. Troubleshooting
+
+- **401 on `/api/orders`:** log in again; token may be expired.
+- **SQL “Invalid column name …”:** align your database with `database/schema.sql`, or adjust column names in `OrdersController` / `AuthController` to match your instance.
+
+## License
+
+Exercise / demo project.
